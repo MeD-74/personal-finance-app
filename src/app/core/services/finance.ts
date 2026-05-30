@@ -35,7 +35,7 @@ export interface Budget {
 })
 export class FinanceService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'https://personal-finance-app-my9b.onrender.com';
 
   getBalance(): Observable<Balance> {
     return this.http.get<Balance>(`${this.apiUrl}/balance`);
