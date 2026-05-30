@@ -1,1 +1,28 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --app-font-family: 'Public Sans', 'Segoe UI', Arial, sans-serif;
+}
+
+html[lang="ar"] {
+  --app-font-family: 'Tajawal', 'Noto Naskh Arabic', 'Segoe UI', Tahoma, sans-serif;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--app-font-family);
+}
+
+html[lang="ar"] * {
+  font-family: var(--app-font-family) !important;
+}
+
+body {
+  background-color: #F8F4F0; 
+}

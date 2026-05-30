@@ -1,0 +1,105 @@
+<div class="flex flex-col gap-6 md:gap-8 max-w-full relative min-w-0">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white tracking-tight truncate">
+      {{ 'Pots' | translate }}
+    </h1>
+    <button
+      (click)="openAddModal()"
+      class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-3 rounded-lg text-sm font-bold hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors shrink-0"
+    >
+      + {{ 'Add New Pot' | translate }}
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    @for (pot of pots; track pot.id) {
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm flex flex-col gap-6 min-w-0 transition-colors duration-300"
+      >
+        <div class="flex justify-between items-center relative">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <div class="w-4 h-4 rounded-full shrink-0" [style.background]="pot.theme"></div>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white truncate">{{ pot.name }}</h2>
+          </div>
+
+          <div class="relative shrink-0">
+            <button
+              (click)="toggleDropdown(pot.id)"
+              class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-2"
+            >
+              <svg width="16" height="4" viewBox="0 0 16 4" fill="currentColor">
+                <circle cx="2" cy="2" r="2" />
+                <circle cx="8" cy="2" r="2" />
+                <circle cx="14" cy="2" r="2" />
+              </svg>
+            </button>
+            @if (activeDropdown === pot.id) {
+              <div
+                class="absolute right-0 top-8 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-100 dark:border-gray-600 w-36 py-2 z-20 text-sm"
+              >
+                <button
+                  (click)="openEditModal(pot)"
+                  class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium"
+                >
+                  {{ 'Edit Pot' | translate }}
+                </button>
+                <div class="h-[1px] bg-gray-100 dark:bg-gray-600 my-1"></div>
+                <button
+                  (click)="openDeleteModal(pot)"
+                  class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-600 text-[#c94736] dark:text-red-400 font-medium"
+                >
+                  {{ 'Delete Pot' | translate }}
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <div class="flex justify-between items-center min-w-0">
+            <span class="text-sm text-[#696868] dark:text-gray-400 truncate shrink-0 mr-2">{{
+              'Total Saved' | translate
+            }}</span>
+            <span
+              class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white truncate max-w-[60%] text-right"
+              >{{ pot.total | currency: 'USD' : 'symbol' : '1.0-0' }}</span
+            >
+          </div>
+          <div
+            class="w-full h-2 bg-[#f8f4f0] dark:bg-gray-700 rounded-full overflow-hidden shrink-0"
+          >
+            <div
+              class="h-full rounded-full transition-all duration-500"
+              [style.width.%]="getPercent(pot.total, pot.target)"
+              [style.background]="pot.theme"
+            ></div>
+          </div>
+          <div class="flex justify-between items-center text-xs min-w-0">
+            <span class="font-bold text-[#696868] dark:text-gray-300 truncate"
+              >{{ getPercent(pot.total, pot.target) | number: '1.2-2' }}%</span
+            >
+            <span class="text-[#696868] dark:text-gray-400 truncate ml-2 text-right"
+              >{{ 'Target of' | translate }}
+              {{ pot.target | currency: 'USD' : 'symbol' : '1.0-0' }}</span
+            >
+          </div>
+        </div>
+
+        <div class="flex gap-4 shrink-0">
+          <button
+            (click)="openMoneyModal(pot, 'add')"
+            class="flex-1 bg-[#f8f4f0] dark:bg-gray-700 text-gray-900 dark:text-white font-bold py-3 rounded-lg hover:bg-white dark:hover:bg-gray-600 border border-transparent hover:border-gray-900 dark:hover:border-white transition-colors text-sm truncate px-1"
+          >
+            + {{ 'Add Money' | translate }}
+          </button>
+          <button
+            (click)="openMoneyModal(pot, 'withdraw')"
+            class="flex-1 bg-[#f8f4f0] dark:bg-gray-700 text-gray-900 dark:text-white font-bold py-3 rounded-lg hover:bg-white dark:hover:bg-gray-600 border border-transparent hover:border-gray-900 dark:hover:border-white transition-colors text-sm truncate px-1"
+          >
+            {{ 'Withdraw' | translate }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

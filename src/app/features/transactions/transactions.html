@@ -1,0 +1,371 @@
+<div class="flex flex-col gap-6 md:gap-8 max-w-full relative min-w-0">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white tracking-tight truncate">
+      {{ 'Transactions' | translate }}
+    </h1>
+    <button
+      (click)="openModal()"
+      class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-2 md:py-3 rounded-lg text-sm font-bold hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors shrink-0"
+    >
+      + {{ 'Add Transaction' | translate }}
+    </button>
+  </div>
+
+  <div
+    class="bg-white dark:bg-gray-800 rounded-xl p-6 md:p-8 flex flex-col gap-6 shadow-sm min-w-0 transition-colors duration-300"
+  >
+    <div class="flex flex-col md:flex-row justify-between gap-4">
+      <div class="relative md:w-80">
+        <input
+          type="text"
+          [placeholder]="'Search transaction' | translate"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+          class="w-full pl-4 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:border-gray-900 dark:focus:border-white bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+        />
+        <svg
+          class="absolute right-3 top-2.5 text-gray-400 dark:text-gray-300"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            d="M11.332 11.332L14.6654 14.6654M13.332 7.33203C13.332 10.6457 10.6457 13.332 7.33203 13.332C4.01832 13.332 1.33203 10.6457 1.33203 7.33203C1.33203 4.01832 4.01832 1.33203 7.33203 1.33203C10.6457 1.33203 13.332 4.01832 13.332 7.33203Z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+
+      <div class="flex items-center justify-between md:justify-end gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-[#696868] dark:text-gray-400 hidden md:block">{{
+            'Sort by' | translate
+          }}</span>
+          <select
+            [(ngModel)]="sortBy"
+            (ngModelChange)="applyFilters()"
+            class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-900 dark:focus:border-white text-gray-900 dark:text-white font-medium bg-white dark:bg-gray-700"
+          >
+            @for (opt of sortOptions; track opt) {
+              <option [value]="opt">{{ opt | translate }}</option>
+            }
+          </select>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-[#696868] dark:text-gray-400 hidden md:block">{{
+            'Category' | translate
+          }}</span>
+          <select
+            [(ngModel)]="selectedCategory"
+            (ngModelChange)="applyFilters()"
+            class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-900 dark:focus:border-white text-gray-900 dark:text-white font-medium bg-white dark:bg-gray-700"
+          >
+            @for (cat of categories; track cat) {
+              <option [value]="cat">{{ cat | translate }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="hidden md:grid grid-cols-12 gap-4 pb-3 border-b border-gray-100 dark:border-gray-700 text-xs text-[#696868] dark:text-gray-400"
+    >
+      <div class="col-span-5">{{ 'Recipient / Sender' | translate }}</div>
+      <div class="col-span-3">{{ 'Category' | translate }}</div>
+      <div class="col-span-2">{{ 'Transaction Date' | translate }}</div>
+      <div class="col-span-2 text-right">{{ 'Amount' | translate }}</div>
+    </div>
+
+    <div class="flex flex-col">
+      @for (tx of paginatedTransactions; track tx.id; let last = $last) {
+        <div
+          class="hidden md:grid grid-cols-12 items-center gap-4 py-4 border-gray-100 dark:border-gray-700"
+          [class.border-b]="!last"
+        >
+          <div class="col-span-5 flex items-center gap-4 min-w-0">
+            <img
+              [src]="tx.avatar"
+              alt="{{ tx.name }}"
+              class="w-10 h-10 rounded-full object-cover bg-gray-200 shrink-0"
+            />
+            <span class="font-bold text-gray-900 dark:text-white text-base truncate">{{
+              tx.name
+            }}</span>
+          </div>
+          <div class="col-span-3 text-sm text-[#696868] dark:text-gray-300 truncate">
+            {{ tx.category | translate }}
+          </div>
+          <div class="col-span-2 text-sm text-[#696868] dark:text-gray-300 truncate">
+            {{ tx.date | date: 'dd MMM yyyy' }}
+          </div>
+          <div class="col-span-2 flex justify-end items-center gap-3">
+            <span
+              class="font-bold text-base truncate"
+              [ngClass]="{
+                'text-[#277c78] dark:text-[#4ade80]': tx.amount > 0,
+                'text-gray-900 dark:text-white': tx.amount <= 0,
+              }"
+            >
+              {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount | currency: 'USD' : 'symbol' }}
+            </span>
+            <button
+              (click)="openDeleteModal(tx)"
+              class="text-gray-300 dark:text-gray-500 hover:text-[#c94736] dark:hover:text-red-400 transition-colors p-1"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                ></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="flex md:hidden justify-between items-center py-4 border-gray-100 dark:border-gray-700"
+          [class.border-b]="!last"
+        >
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <img
+              [src]="tx.avatar"
+              alt="{{ tx.name }}"
+              class="w-10 h-10 rounded-full object-cover bg-gray-200 shrink-0"
+            />
+            <div class="flex flex-col gap-1 min-w-0">
+              <span class="font-bold text-gray-900 dark:text-white text-sm truncate">{{
+                tx.name
+              }}</span>
+              <span class="text-xs text-[#696868] dark:text-gray-400 truncate">{{
+                tx.category | translate
+              }}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 shrink-0 ml-2">
+            <div class="flex flex-col items-end gap-1">
+              <span
+                class="font-bold text-sm truncate"
+                [ngClass]="{
+                  'text-[#277c78] dark:text-[#4ade80]': tx.amount > 0,
+                  'text-gray-900 dark:text-white': tx.amount <= 0,
+                }"
+              >
+                {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount | currency: 'USD' : 'symbol' }}
+              </span>
+              <span class="text-xs text-[#696868] dark:text-gray-400">{{
+                tx.date | date: 'dd MMM yyyy'
+              }}</span>
+            </div>
+            <button
+              (click)="openDeleteModal(tx)"
+              class="text-gray-300 dark:text-gray-500 hover:text-[#c94736] dark:hover:text-red-400 transition-colors p-1"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (totalPages > 1) {
+      <div
+        class="flex justify-between items-center pt-6 border-t border-gray-100 dark:border-gray-700"
+      >
+        <button
+          (click)="changePage(currentPage - 1)"
+          [disabled]="currentPage === 1"
+          class="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 text-gray-900 dark:text-white"
+        >
+          <span>&larr;</span> <span class="hidden sm:block">{{ 'Prev' | translate }}</span>
+        </button>
+        <div class="flex items-center gap-1 md:gap-2">
+          @for (page of getPagesArray(); track page) {
+            <button
+              (click)="changePage(page)"
+              class="w-8 h-8 md:w-10 md:h-10 rounded-lg text-sm font-bold border flex justify-center items-center"
+              [ngClass]="
+                currentPage === page
+                  ? 'bg-[#201f24] text-white border-[#201f24] dark:bg-white dark:text-gray-900 dark:border-white'
+                  : 'border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 bg-white dark:bg-gray-700'
+              "
+            >
+              {{ page }}
+            </button>
+          }
+        </div>
+        <button
+          (click)="changePage(currentPage + 1)"
+          [disabled]="currentPage === totalPages"
+          class="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 text-gray-900 dark:text-white"
+        >
+          <span class="hidden sm:block">{{ 'Next' | translate }}</span> <span>&rarr;</span>
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (isModalOpen) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md p-6 md:p-8 shadow-xl flex flex-col gap-6 text-gray-900 dark:text-white"
+      >
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-bold">{{ 'Add Transaction' | translate }}</h2>
+          <button
+            (click)="closeModal()"
+            class="text-gray-400 hover:text-gray-900 dark:hover:text-white"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <form (ngSubmit)="saveTransaction()" class="flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+              'Recipient / Sender' | translate
+            }}</label>
+            <input
+              type="text"
+              name="name"
+              [(ngModel)]="newTx.name"
+              required
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm focus:outline-none focus:border-gray-900 dark:focus:border-white"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+              'Category' | translate
+            }}</label>
+            <select
+              name="category"
+              [(ngModel)]="newTx.category"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm focus:outline-none focus:border-gray-900 dark:focus:border-white"
+            >
+              @for (cat of formCategories; track cat) {
+                <option [value]="cat">{{ cat | translate }}</option>
+              }
+            </select>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+              'Amount (Use - for expenses)' | translate
+            }}</label>
+            <input
+              type="number"
+              name="amount"
+              [(ngModel)]="newTx.amount"
+              required
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm focus:outline-none focus:border-gray-900 dark:focus:border-white"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+              'Date' | translate
+            }}</label>
+            <input
+              type="date"
+              name="date"
+              [(ngModel)]="newTx.date"
+              required
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm focus:outline-none focus:border-gray-900 dark:focus:border-white"
+            />
+          </div>
+          <button
+            type="submit"
+            [disabled]="!newTx.name || !newTx.amount || !newTx.date"
+            class="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-3.5 rounded-lg mt-2 hover:bg-gray-700 dark:hover:bg-gray-200 disabled:opacity-50"
+          >
+            Save Transaction
+          </button>
+        </form>
+      </div>
+    </div>
+  }
+
+  @if (isDeleteModalOpen && selectedTxToDelete) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md p-6 md:p-8 shadow-xl flex flex-col gap-6 text-center md:text-left text-gray-900 dark:text-white"
+      >
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-bold">{{ 'Delete Transaction?' | translate }}</h2>
+          <button
+            (click)="closeDeleteModal()"
+            class="text-gray-400 hover:text-gray-900 dark:hover:text-white"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <p class="text-sm text-[#696868] dark:text-gray-300 leading-relaxed">
+          {{ 'Are you sure you want to delete this transaction?' | translate }}
+          <strong>'{{ selectedTxToDelete.name }}'</strong>?
+        </p>
+        <div class="flex flex-col gap-3 mt-2">
+          <button
+            (click)="confirmDelete()"
+            class="w-full bg-[#c94736] text-white font-bold py-3.5 rounded-lg hover:bg-red-700 transition-colors"
+          >
+            {{ 'Yes, Confirm Deletion' | translate }}
+          </button>
+          <button
+            (click)="closeDeleteModal()"
+            class="w-full bg-transparent text-[#696868] dark:text-gray-400 font-bold py-3.5 rounded-lg hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
+            {{ 'No, Go Back' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,147 @@
+﻿<nav
+  class="fixed bottom-0 w-full z-50 bg-[#201f24] dark:bg-gray-950 text-[#b3b3b3] rounded-t-xl md:rounded-t-2xl transition-all duration-300 ease-in-out lg:bottom-auto lg:top-0 lg:start-0 lg:h-screen lg:rounded-none lg:rounded-e-[32px] lg:flex lg:flex-col lg:py-10"
+  [ngClass]="isMinimized ? 'lg:w-[88px]' : 'lg:w-[300px]'"
+>
+  <div
+    class="hidden lg:flex px-8 mb-16 items-center transition-all duration-300"
+    [ngClass]="isMinimized ? 'justify-center px-0' : ''"
+  >
+    @if (isMinimized) {
+      <img src="/assets/images/logo-small.svg" class="h-8" />
+    } @else {
+      <img src="/assets/images/logo-large.svg" class="h-8" />
+    }
+  </div>
+
+  <ul
+    class="flex justify-evenly items-center h-16 md:h-20 lg:h-auto lg:flex-col lg:items-stretch lg:gap-2 transition-all duration-300"
+    [ngClass]="isMinimized ? 'lg:pe-4 lg:ps-0' : 'lg:pe-6'"
+  >
+    @for (item of navItems; track item.name) {
+      <li class="lg:w-full flex">
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: false }"
+          #rla="routerLinkActive"
+          class="flex flex-col lg:flex-row items-center flex-1 gap-1 p-2 rounded-t-lg lg:rounded-none border-b-4 lg:border-b-0 lg:border-s-4 transition-all duration-300 font-bold text-xs md:text-sm lg:text-base overflow-hidden"
+          [ngClass]="[
+            rla.isActive
+              ? 'bg-[#f8f4f0] text-gray-900 border-[#277c78] dark:bg-gray-800 dark:text-white dark:border-[#4ade80]'
+              : 'border-transparent text-[#b3b3b3] hover:text-white',
+            isMinimized
+              ? 'lg:justify-center lg:py-4 lg:rounded-e-xl'
+              : 'lg:gap-4 lg:px-8 lg:py-4 lg:rounded-e-full',
+          ]"
+        >
+          <span
+            class="w-6 h-6 shrink-0 transition-colors"
+            [ngClass]="rla.isActive ? 'bg-[#277c78] dark:bg-[#4ade80]' : 'bg-current'"
+            [style.mask]="'url(/assets/images/' + item.icon + ') no-repeat center / contain'"
+            [style.-webkit-mask]="
+              'url(/assets/images/' + item.icon + ') no-repeat center / contain'
+            "
+          ></span>
+          <span
+            class="hidden md:block whitespace-nowrap transition-opacity duration-300"
+            [class.lg:hidden]="isMinimized"
+            >{{ item.name | translate }}</span
+          >
+        </a>
+      </li>
+    }
+  </ul>
+
+  <div
+    class="hidden lg:flex flex-col gap-6 mt-auto transition-all duration-300 relative"
+    [ngClass]="isMinimized ? 'items-center px-0' : 'px-8'"
+  >
+    <button
+      (click)="settings.toggleTheme()"
+      class="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors font-bold overflow-hidden"
+    >
+      <svg
+        width="24"
+        height="24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        class="shrink-0"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+      @if (!isMinimized) {
+        <span class="whitespace-nowrap">{{ 'Theme' | translate }}</span>
+      }
+    </button>
+
+    <div class="relative w-full flex justify-center lg:justify-start">
+      <button
+        (click)="isLangDropdownOpen = !isLangDropdownOpen"
+        class="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors font-bold overflow-hidden w-full"
+      >
+        <svg
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="shrink-0"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path
+            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+          ></path>
+        </svg>
+        @if (!isMinimized) {
+          <span class="whitespace-nowrap">{{ 'Language' | translate }}</span>
+        }
+      </button>
+
+      @if (isLangDropdownOpen) {
+        <div
+          class="absolute bottom-full mb-4 start-0 lg:start-8 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 py-2 w-48 z-50 flex flex-col max-h-80 overflow-y-auto"
+        >
+          @for (language of settings.languages; track language.code) {
+            <button
+              (click)="settings.setLanguage(language.code); isLangDropdownOpen = false"
+              class="text-start px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-sans text-sm font-bold flex flex-col gap-0.5"
+              [class.text-[#277c78]]="settings.language() === language.code"
+            >
+              <span>{{ language.labelKey | translate }}</span>
+              <span class="text-xs font-medium opacity-70">{{ language.nativeName }}</span>
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="h-[1px] w-full bg-gray-700 my-1"></div>
+
+    <button
+      (click)="toggleMinimize()"
+      class="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors font-bold overflow-hidden"
+    >
+      <span
+        class="w-6 h-6 shrink-0 bg-current transition-transform duration-300"
+        [ngClass]="
+          isMinimized
+            ? settings.language() === 'ar'
+              ? '-rotate-180'
+              : 'rotate-180'
+            : settings.language() === 'ar'
+              ? 'rotate-180'
+              : ''
+        "
+        style="
+          mask: url(/assets/images/icon-minimize-menu.svg) no-repeat center / contain;
+          -webkit-mask: url(/assets/images/icon-minimize-menu.svg) no-repeat center / contain;
+        "
+      ></span>
+      @if (!isMinimized) {
+        <span class="whitespace-nowrap">{{ 'Minimize Menu' | translate }}</span>
+      }
+    </button>
+  </div>
+</nav>
