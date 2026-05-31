@@ -1,5 +1,5 @@
 ﻿<nav
-  class="fixed bottom-0 w-full z-50 bg-[#201f24] dark:bg-gray-950 text-[#b3b3b3] rounded-t-xl md:rounded-t-2xl transition-all duration-300 ease-in-out lg:bottom-auto lg:top-0 lg:start-0 lg:h-screen lg:rounded-none lg:rounded-e-[32px] lg:flex lg:flex-col lg:py-10"
+  class="fixed bottom-0 w-full z-50 bg-[#201f24] dark:bg-gray-950 text-[#b3b3b3] rounded-t-xl md:rounded-t-2xl transition-all duration-300 ease-in-out lg:fixed lg:top-0 lg:start-0 lg:bottom-auto lg:h-screen lg:rounded-none lg:rounded-e-[32px] lg:flex lg:flex-col lg:py-10"
   [ngClass]="isMinimized ? 'lg:w-[88px]' : 'lg:w-[300px]'"
 >
   <div
@@ -7,9 +7,9 @@
     [ngClass]="isMinimized ? 'justify-center px-0' : ''"
   >
     @if (isMinimized) {
-      <img src="/assets/images/logo-small.svg" class="h-8" />
+      <img src="assets/images/logo-small.svg" class="h-8" />
     } @else {
-      <img src="/assets/images/logo-large.svg" class="h-8" />
+      <img src="assets/images/logo-large.svg" class="h-8" />
     }
   </div>
 
@@ -35,11 +35,11 @@
           ]"
         >
           <span
-            class="w-6 h-6 shrink-0 transition-colors"
+            class="w-6 h-6 shrink-0 transition-colors block"
             [ngClass]="rla.isActive ? 'bg-[#277c78] dark:bg-[#4ade80]' : 'bg-current'"
-            [style.mask]="'url(/assets/images/' + item.icon + ') no-repeat center / contain'"
+            [style.mask]="'url(\'assets/images/' + item.icon + '\') no-repeat center / contain'"
             [style.-webkit-mask]="
-              'url(/assets/images/' + item.icon + ') no-repeat center / contain'
+              'url(\'assets/images/' + item.icon + '\') no-repeat center / contain'
             "
           ></span>
           <span
@@ -53,16 +53,18 @@
   </ul>
 
   <div
-    class="hidden lg:flex flex-col gap-6 mt-auto transition-all duration-300 relative"
+    class="hidden lg:flex flex-col gap-6 mt-auto transition-all duration-300 relative w-full"
     [ngClass]="isMinimized ? 'items-center px-0' : 'px-8'"
   >
     <button
       (click)="settings.toggleTheme()"
-      class="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors font-bold overflow-hidden"
+      class="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors font-bold overflow-hidden w-full"
+      [ngClass]="isMinimized ? 'justify-center' : 'justify-start'"
     >
       <svg
         width="24"
         height="24"
+        viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
         stroke-width="2"
@@ -75,14 +77,16 @@
       }
     </button>
 
-    <div class="relative w-full flex justify-center lg:justify-start">
+    <div class="relative w-full flex" [ngClass]="isMinimized ? 'justify-center' : 'justify-start'">
       <button
         (click)="isLangDropdownOpen = !isLangDropdownOpen"
         class="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors font-bold overflow-hidden w-full"
+        [ngClass]="isMinimized ? 'justify-center' : 'justify-start'"
       >
         <svg
           width="24"
           height="24"
+          viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
@@ -121,7 +125,8 @@
 
     <button
       (click)="toggleMinimize()"
-      class="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors font-bold overflow-hidden"
+      class="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors font-bold overflow-hidden w-full"
+      [ngClass]="isMinimized ? 'justify-center' : 'justify-start'"
     >
       <span
         class="w-6 h-6 shrink-0 bg-current transition-transform duration-300"
@@ -134,10 +139,7 @@
               ? 'rotate-180'
               : ''
         "
-        style="
-          mask: url(/assets/images/icon-minimize-menu.svg) no-repeat center / contain;
-          -webkit-mask: url(/assets/images/icon-minimize-menu.svg) no-repeat center / contain;
-        "
+        style="mask: url('assets/images/icon-minimize-menu.svg') no-repeat center / contain; -webkit-mask: url('assets/images/icon-minimize-menu.svg) no-repeat center / contain;"
       ></span>
       @if (!isMinimized) {
         <span class="whitespace-nowrap">{{ 'Minimize Menu' | translate }}</span>

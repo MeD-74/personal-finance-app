@@ -272,20 +272,51 @@
               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm focus:outline-none focus:border-gray-900 dark:focus:border-white"
             />
           </div>
-          <div class="flex flex-col gap-2">
+
+          <div class="flex flex-col gap-2 relative">
             <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
               'Category' | translate
             }}</label>
-            <select
-              name="category"
-              [(ngModel)]="newTx.category"
-              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm focus:outline-none focus:border-gray-900 dark:focus:border-white"
+            <div
+              (click)="isCategoryDropdownOpen = !isCategoryDropdownOpen"
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white flex justify-between items-center cursor-pointer focus:outline-none focus:border-gray-900 dark:focus:border-white"
             >
-              @for (cat of formCategories; track cat) {
-                <option [value]="cat">{{ cat | translate }}</option>
-              }
-            </select>
+              <span class="font-bold">{{ newTx.category || 'Select Category' | translate }}</span>
+              <svg
+                width="12"
+                height="8"
+                viewBox="0 0 12 8"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                class="text-gray-500"
+                [class.rotate-180]="isCategoryDropdownOpen"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M1 1.5l5 5 5-5" />
+              </svg>
+            </div>
+            @if (isCategoryDropdownOpen) {
+              <div class="fixed inset-0 z-10" (click)="isCategoryDropdownOpen = false"></div>
+              <div
+                class="absolute top-[70px] z-20 w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-xl py-2 max-h-60 overflow-y-auto"
+              >
+                @for (cat of formCategories; track cat; let last = $last) {
+                  <div
+                    (click)="selectCategory(cat)"
+                    class="flex items-center justify-between px-4 py-3 transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{
+                      cat | translate
+                    }}</span>
+                  </div>
+                  @if (!last) {
+                    <div class="h-[1px] bg-gray-100 dark:bg-gray-700 mx-4"></div>
+                  }
+                }
+              </div>
+            }
           </div>
+
           <div class="flex flex-col gap-2">
             <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
               'Amount (Use - for expenses)' | translate
@@ -312,10 +343,10 @@
           </div>
           <button
             type="submit"
-            [disabled]="!newTx.name || !newTx.amount || !newTx.date"
-            class="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-3.5 rounded-lg mt-2 hover:bg-gray-700 dark:hover:bg-gray-200 disabled:opacity-50"
+            [disabled]="!newTx.name || !newTx.amount || !newTx.date || !newTx.category"
+            class="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-3.5 rounded-lg mt-2 hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors disabled:opacity-50"
           >
-            Save Transaction
+            {{ 'Save Transaction' | translate }}
           </button>
         </form>
       </div>

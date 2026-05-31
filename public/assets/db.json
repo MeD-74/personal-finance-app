@@ -461,42 +461,30 @@
       "id": "tJ6Zi3ER_1Q"
     },
     {
-      "category": "Entertainment",
+      "category": "Bills",
       "maximum": 500,
-      "theme": "#277c78",
+      "theme": "#82c9d7",
       "id": "xngjQnV4nSs"
     },
     {
-      "category": "Entertainment",
-      "maximum": 1111,
-      "theme": "#826cb0",
+      "category": "Dining Out",
+      "maximum": 250,
+      "theme": "#f2cdac",
       "id": "T16nkqWD6cU"
-    },
-    {
-      "category": "Entertainment",
-      "maximum": 232,
-      "theme": "#c94736",
-      "id": "7AWmQGj38Nk"
-    },
-    {
-      "category": "Entertainment",
-      "maximum": 1231,
-      "theme": "#626070",
-      "id": "SppqCtG6GdU"
     }
   ],
   "pots": [
     {
       "name": "Concert Ticket",
       "target": 150,
-      "total": 1232,
+      "total": 110,
       "theme": "#626070",
       "id": "lRliiksaIA4"
     },
     {
       "name": "Gift",
       "target": 150,
-      "total": 525,
+      "total": 40,
       "theme": "#82C9D7",
       "id": "BS7R8P_SimQ"
     },

@@ -1,31 +1,33 @@
-import { Component, inject } from '@angular/core';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
-import { Sidebar } from './core/components/sidebar/sidebar';
-import { filter } from 'rxjs';
-import { NgClass } from '@angular/common';
-import { SettingsService } from './core/services/settings';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+
+import { Sidebar } from './core/components/sidebar/sidebar';
+import { SettingsService } from './core/services/settings';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Sidebar, NgClass, TranslateModule],
+  imports: [RouterOutlet, Sidebar, CommonModule, TranslateModule],
   templateUrl: './app.html',
-  styleUrl: './app.scss',
+  styleUrls: ['./app.scss'],
 })
-export class App {
-  title = 'personal-finance-app';
-  router = inject(Router);
-  settings = inject(SettingsService); 
+export class App implements OnInit {
+  private router = inject(Router);
 
-  isAuthPage = false;
+  settings = inject(SettingsService);
+
+  showSidebar = true;
   isSidebarMinimized = false;
 
-  constructor() {
+  ngOnInit() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
-        this.isAuthPage = event.url.includes('/login') || event.url.includes('/signup');
+        const currentUrl = event.urlAfterRedirects || event.url;
+        this.showSidebar = !currentUrl.includes('/login') && !currentUrl.includes('/signup');
       });
   }
 }

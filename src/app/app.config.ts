@@ -1,9 +1,9 @@
 ﻿import { ApplicationConfig, importProvidersFrom, PLATFORM_ID } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withHashLocation } from '@angular/router';
 import { routes } from './app.routes';
 
 import { isPlatformServer } from '@angular/common';
-import { provideHttpClient, HttpClient } from '@angular/common/http';
+import { provideHttpClient, HttpClient, withFetch } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 
@@ -28,7 +28,7 @@ export function HttpLoaderFactory(http: HttpClient, platformId: object) {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes, withHashLocation()),
     provideHttpClient(),
     importProvidersFrom(
       TranslateModule.forRoot({

@@ -57,6 +57,7 @@ export class Transactions implements OnInit {
   totalPages = 1;
 
   isModalOpen = false;
+  isCategoryDropdownOpen = false; 
   newTx: Partial<Transaction> = {
     name: '',
     category: 'General',
@@ -85,6 +86,12 @@ export class Transactions implements OnInit {
   }
   closeModal() {
     this.isModalOpen = false;
+    this.isCategoryDropdownOpen = false; 
+  }
+
+  selectCategory(cat: string) {
+    this.newTx.category = cat;
+    this.isCategoryDropdownOpen = false;
   }
 
   saveTransaction() {
@@ -141,11 +148,11 @@ export class Transactions implements OnInit {
         const amount = this.selectedTxToDelete!.amount;
 
         if (amount > 0) {
-          balance.income -= amount; 
-          balance.current -= amount; 
+          balance.income -= amount;
+          balance.current -= amount;
         } else {
-          balance.expenses -= Math.abs(amount); 
-          balance.current += Math.abs(amount); 
+          balance.expenses -= Math.abs(amount);
+          balance.current += Math.abs(amount);
         }
 
         this.financeService.updateBalance(balance).subscribe({
@@ -153,7 +160,7 @@ export class Transactions implements OnInit {
             this.financeService.deleteTransaction(this.selectedTxToDelete!.id!).subscribe({
               next: () => {
                 this.closeDeleteModal();
-                this.loadData(); 
+                this.loadData();
               },
             });
           },

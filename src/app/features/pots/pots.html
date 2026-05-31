@@ -22,10 +22,10 @@
             <h2 class="text-xl font-bold text-gray-900 dark:text-white truncate">{{ pot.name }}</h2>
           </div>
 
-          <div class="relative shrink-0">
+          <div class="relative">
             <button
               (click)="toggleDropdown(pot.id)"
-              class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-2"
+              class="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <svg width="16" height="4" viewBox="0 0 16 4" fill="currentColor">
                 <circle cx="2" cy="2" r="2" />
@@ -34,19 +34,20 @@
               </svg>
             </button>
             @if (activeDropdown === pot.id) {
+              <div class="fixed inset-0 z-10" (click)="activeDropdown = null"></div>
               <div
-                class="absolute right-0 top-8 bg-white dark:bg-gray-700 rounded-xl shadow-lg border border-gray-100 dark:border-gray-600 w-36 py-2 z-20 text-sm"
+                class="absolute right-0 top-10 w-32 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-20 border border-gray-100 dark:border-gray-700"
               >
                 <button
                   (click)="openEditModal(pot)"
-                  class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium"
+                  class="w-full text-left px-4 py-2 text-sm text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   {{ 'Edit Pot' | translate }}
                 </button>
-                <div class="h-[1px] bg-gray-100 dark:bg-gray-600 my-1"></div>
+                <hr class="my-1 border-gray-100 dark:border-gray-700" />
                 <button
                   (click)="openDeleteModal(pot)"
-                  class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-600 text-[#c94736] dark:text-red-400 font-medium"
+                  class="w-full text-left px-4 py-2 text-sm text-[#c94736] hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                 >
                   {{ 'Delete Pot' | translate }}
                 </button>
@@ -57,17 +58,15 @@
 
         <div class="flex flex-col gap-4">
           <div class="flex justify-between items-center min-w-0">
-            <span class="text-sm text-[#696868] dark:text-gray-400 truncate shrink-0 mr-2">{{
+            <span class="text-[#696868] dark:text-gray-400 text-sm truncate">{{
               'Total Saved' | translate
             }}</span>
-            <span
-              class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white truncate max-w-[60%] text-right"
-              >{{ pot.total | currency: 'USD' : 'symbol' : '1.0-0' }}</span
-            >
+            <span class="font-bold text-3xl text-gray-900 dark:text-white truncate max-w-[60%]">{{
+              pot.total | currency: 'USD' : 'symbol' : '1.0-2'
+            }}</span>
           </div>
-          <div
-            class="w-full h-2 bg-[#f8f4f0] dark:bg-gray-700 rounded-full overflow-hidden shrink-0"
-          >
+
+          <div class="w-full bg-[#f8f4f0] dark:bg-gray-700 h-2 rounded-full overflow-hidden flex">
             <div
               class="h-full rounded-full transition-all duration-500"
               [style.width.%]="getPercent(pot.total, pot.target)"
@@ -96,10 +95,350 @@
             (click)="openMoneyModal(pot, 'withdraw')"
             class="flex-1 bg-[#f8f4f0] dark:bg-gray-700 text-gray-900 dark:text-white font-bold py-3 rounded-lg hover:bg-white dark:hover:bg-gray-600 border border-transparent hover:border-gray-900 dark:hover:border-white transition-colors text-sm truncate px-1"
           >
-            {{ 'Withdraw' | translate }}
+            - {{ 'Withdraw' | translate }}
           </button>
         </div>
       </div>
     }
   </div>
 </div>
+
+@if (isAddModalOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 md:p-8 w-full max-w-[500px] shadow-lg">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ 'Add New Pot' | translate }}
+        </h2>
+        <button
+          (click)="closeAddModal()"
+          class="text-gray-500 hover:text-gray-900 dark:hover:text-white font-bold text-xl"
+        >
+          &times;
+        </button>
+      </div>
+      <form (ngSubmit)="savePot()" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+            'Pot Name' | translate
+          }}</label>
+          <input
+            type="text"
+            [(ngModel)]="newPot.name"
+            name="name"
+            required
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-transparent dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors"
+          />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+            'Target' | translate
+          }}</label>
+          <input
+            type="number"
+            [(ngModel)]="newPot.target"
+            name="target"
+            required
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-transparent dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2 relative">
+          <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+            'Theme' | translate
+          }}</label>
+          <div
+            (click)="isAddThemeDropdownOpen = !isAddThemeDropdownOpen"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-transparent dark:text-white flex justify-between items-center cursor-pointer"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-4 h-4 rounded-full" [style.background]="newPot.theme"></div>
+              <span>{{ getThemeName(newPot.theme) | translate }}</span>
+            </div>
+            <svg
+              width="12"
+              height="8"
+              viewBox="0 0 12 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="text-gray-500"
+              [class.rotate-180]="isAddThemeDropdownOpen"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M1 1.5l5 5 5-5" />
+            </svg>
+          </div>
+
+          @if (isAddThemeDropdownOpen) {
+            <div class="fixed inset-0 z-10" (click)="isAddThemeDropdownOpen = false"></div>
+            <div
+              class="absolute top-[70px] z-20 w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-xl py-2 max-h-60 overflow-y-auto"
+            >
+              @for (color of themeColors; track color.hex; let last = $last) {
+                <div
+                  (click)="selectAddTheme(color.hex)"
+                  class="flex items-center justify-between px-4 py-3 transition-colors"
+                  [ngClass]="
+                    isThemeUsed(color.hex)
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'
+                  "
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-4 h-4 rounded-full" [style.background]="color.hex"></div>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{
+                      color.name | translate
+                    }}</span>
+                  </div>
+                  @if (isThemeUsed(color.hex)) {
+                    <span class="text-xs text-gray-400">{{ 'Already used' | translate }}</span>
+                  }
+                </div>
+                @if (!last) {
+                  <div class="h-[1px] bg-gray-100 dark:bg-gray-700 mx-4"></div>
+                }
+              }
+            </div>
+          }
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="!newPot.name || !newPot.target"
+          class="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-3.5 rounded-lg mt-2 hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors text-sm disabled:opacity-50"
+        >
+          {{ 'Add Pot' | translate }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
+
+@if (isEditModalOpen && selectedPot) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 md:p-8 w-full max-w-[500px] shadow-lg">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ 'Edit Pot' | translate }}
+        </h2>
+        <button
+          (click)="closeEditModal()"
+          class="text-gray-500 hover:text-gray-900 dark:hover:text-white font-bold text-xl"
+        >
+          &times;
+        </button>
+      </div>
+      <form (ngSubmit)="saveEditedPot()" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+            'Pot Name' | translate
+          }}</label>
+          <input
+            type="text"
+            [(ngModel)]="selectedPot.name"
+            name="name"
+            required
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-transparent dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors"
+          />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+            'Target' | translate
+          }}</label>
+          <input
+            type="number"
+            [(ngModel)]="selectedPot.target"
+            name="target"
+            required
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-transparent dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2 relative">
+          <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+            'Theme' | translate
+          }}</label>
+          <div
+            (click)="isEditThemeDropdownOpen = !isEditThemeDropdownOpen"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-transparent dark:text-white flex justify-between items-center cursor-pointer"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-4 h-4 rounded-full" [style.background]="selectedPot.theme"></div>
+              <span>{{ getThemeName(selectedPot.theme) | translate }}</span>
+            </div>
+            <svg
+              width="12"
+              height="8"
+              viewBox="0 0 12 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="text-gray-500"
+              [class.rotate-180]="isEditThemeDropdownOpen"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M1 1.5l5 5 5-5" />
+            </svg>
+          </div>
+
+          @if (isEditThemeDropdownOpen) {
+            <div class="fixed inset-0 z-10" (click)="isEditThemeDropdownOpen = false"></div>
+            <div
+              class="absolute top-[70px] z-20 w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-xl py-2 max-h-60 overflow-y-auto"
+            >
+              @for (color of themeColors; track color.hex; let last = $last) {
+                <div
+                  (click)="selectEditTheme(color.hex)"
+                  class="flex items-center justify-between px-4 py-3 transition-colors"
+                  [ngClass]="
+                    isThemeUsed(color.hex, selectedPot.id)
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'
+                  "
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-4 h-4 rounded-full" [style.background]="color.hex"></div>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{
+                      color.name | translate
+                    }}</span>
+                  </div>
+                  @if (isThemeUsed(color.hex, selectedPot.id)) {
+                    <span class="text-xs text-gray-400">{{ 'Already used' | translate }}</span>
+                  }
+                </div>
+                @if (!last) {
+                  <div class="h-[1px] bg-gray-100 dark:bg-gray-700 mx-4"></div>
+                }
+              }
+            </div>
+          }
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="!selectedPot.name || !selectedPot.target"
+          class="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-3.5 rounded-lg mt-2 hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors text-sm disabled:opacity-50"
+        >
+          {{ 'Save Changes' | translate }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
+
+@if (isDeleteModalOpen && selectedPot) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 md:p-8 w-full max-w-[500px] shadow-lg">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+          {{ 'Delete' | translate }} '{{ selectedPot.name }}'?
+        </h2>
+        <button
+          (click)="closeDeleteModal()"
+          class="text-gray-500 hover:text-gray-900 dark:hover:text-white font-bold text-xl"
+        >
+          &times;
+        </button>
+      </div>
+      <p class="text-sm text-[#696868] dark:text-gray-400 mb-6 leading-relaxed">
+        {{
+          'Are you sure you want to delete this pot? This action cannot be reversed, and all the money inside it will be returned to your main balance.'
+            | translate
+        }}
+      </p>
+      <div class="flex flex-col gap-3">
+        <button
+          (click)="confirmDelete()"
+          class="w-full bg-[#c94736] text-white font-bold py-3.5 rounded-lg hover:bg-red-700 transition-colors text-sm"
+        >
+          {{ 'Yes, Confirm Deletion' | translate }}
+        </button>
+        <button
+          (click)="closeDeleteModal()"
+          class="w-full text-gray-500 dark:text-gray-400 font-bold py-3.5 hover:text-gray-900 dark:hover:text-white transition-colors text-sm"
+        >
+          {{ 'No, Go Back' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (isMoneyModalOpen && selectedPot) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 md:p-8 w-full max-w-[500px] shadow-lg">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ (moneyMode === 'add' ? 'Add to' : 'Withdraw from') | translate }} '{{
+            selectedPot.name
+          }}'
+        </h2>
+        <button
+          (click)="closeMoneyModal()"
+          class="text-gray-500 hover:text-gray-900 dark:hover:text-white font-bold text-xl"
+        >
+          &times;
+        </button>
+      </div>
+      <form (ngSubmit)="confirmMoneyAction()" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-[#696868] dark:text-gray-400">{{
+            'Amount' | translate
+          }}</label>
+          <input
+            type="number"
+            [(ngModel)]="moneyAmount"
+            name="amount"
+            required
+            min="1"
+            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-transparent dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors"
+          />
+        </div>
+        <button
+          type="submit"
+          [disabled]="!moneyAmount || moneyAmount <= 0"
+          class="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-3.5 rounded-lg mt-2 hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors text-sm disabled:opacity-50"
+        >
+          {{ 'Confirm' | translate }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
+
+@if (errorModalMessage) {
+  <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4">
+    <div
+      class="bg-white dark:bg-gray-800 rounded-xl p-6 md:p-8 w-full max-w-[400px] shadow-lg text-center flex flex-col items-center border border-red-100 dark:border-red-900"
+    >
+      <div
+        class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4 shrink-0"
+      >
+        <svg
+          class="w-6 h-6 text-[#c94736] dark:text-red-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          ></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        {{ 'Error' | translate }}
+      </h3>
+      <p class="text-sm text-[#696868] dark:text-gray-400 mb-6 leading-relaxed">
+        {{ errorModalMessage | translate }}
+      </p>
+      <button
+        (click)="closeErrorModal()"
+        class="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold py-3.5 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors text-sm"
+      >
+        {{ 'Close' | translate }}
+      </button>
+    </div>
+  </div>
+}

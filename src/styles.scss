@@ -1,3 +1,20 @@
+/* استدعاء خط Public Sans محلياً من الفولدر اللي جوه الـ public */
+@font-face {
+  font-family: 'Public Sans';
+  src: url('../public/assets/fonts/static/PublicSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Public Sans';
+  src: url('../public/assets/fonts/static/PublicSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,8 +23,10 @@
   --app-font-family: 'Public Sans', 'Segoe UI', Arial, sans-serif;
 }
 
-html[lang="ar"] {
-  --app-font-family: 'Tajawal', 'Noto Naskh Arabic', 'Segoe UI', Tahoma, sans-serif;
+html[lang='ar'],
+html[lang='ar'] body,
+html[lang='ar'] * {
+  font-family: 'Tajawal', sans-serif !important;
 }
 
 html,
@@ -19,10 +38,10 @@ textarea {
   font-family: var(--app-font-family);
 }
 
-html[lang="ar"] * {
-  font-family: var(--app-font-family) !important;
-}
-
 body {
-  background-color: #F8F4F0; 
+  background-color: #f8f4f0;
+}
+header img {
+  display: block;
+  max-height: 24px; 
 }

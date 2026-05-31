@@ -51,16 +51,25 @@ export class Budgets implements OnInit {
   ];
 
   isModalOpen = false;
+  isEditModalOpen = false;
+  isDeleteModalOpen = false;
+
+  // Custom Dropdowns
+  isAddCategoryDropdownOpen = false;
+  isAddThemeDropdownOpen = false;
+  isEditCategoryDropdownOpen = false;
+  isEditThemeDropdownOpen = false;
+
   newBudget: Partial<Budget> = {
-    category: 'Entertainment',
+    category: '',
     maximum: null as any,
-    theme: '#277c78',
+    theme: '',
   };
 
   activeDropdown: string | number | null = null;
-  isEditModalOpen = false;
-  isDeleteModalOpen = false;
-  selectedBudget: Budget | null = null; 
+  selectedBudget: Budget | null = null;
+  errorModalMessage: string | null = null;
+
   ngOnInit() {
     this.loadData();
   }
@@ -109,12 +118,58 @@ export class Budgets implements OnInit {
     return gradient + ')';
   }
 
-  // --- Add Modal ---
+  getThemeName(hex: string | undefined): string {
+    if (!hex) return '';
+    return (
+      this.themeColors.find((c) => c.hex.toLowerCase() === hex.toLowerCase())?.name || 'Unknown'
+    );
+  }
+
+  isCategoryUsed(cat: string, excludeId?: string | number): boolean {
+    return this.budgets.some((b) => b.category === cat && b.id !== excludeId);
+  }
+
+  isThemeUsed(hex: string, excludeId?: string | number): boolean {
+    return this.budgets.some(
+      (b) => b.theme.toLowerCase() === hex.toLowerCase() && b.id !== excludeId,
+    );
+  }
+
+  selectAddCategory(cat: string) {
+    if (this.isCategoryUsed(cat)) return;
+    this.newBudget.category = cat;
+    this.isAddCategoryDropdownOpen = false;
+  }
+  selectAddTheme(hex: string) {
+    if (this.isThemeUsed(hex)) return;
+    this.newBudget.theme = hex;
+    this.isAddThemeDropdownOpen = false;
+  }
+  selectEditCategory(cat: string) {
+    if (!this.selectedBudget || this.isCategoryUsed(cat, this.selectedBudget.id)) return;
+    this.selectedBudget.category = cat;
+    this.isEditCategoryDropdownOpen = false;
+  }
+  selectEditTheme(hex: string) {
+    if (!this.selectedBudget || this.isThemeUsed(hex, this.selectedBudget.id)) return;
+    this.selectedBudget.theme = hex;
+    this.isEditThemeDropdownOpen = false;
+  }
+
   openModal() {
     this.isModalOpen = true;
+    const availableCat = this.categories.find((c) => !this.isCategoryUsed(c));
+    const availableTheme = this.themeColors.find((t) => !this.isThemeUsed(t.hex));
+    this.newBudget = {
+      category: availableCat || '',
+      maximum: null as any,
+      theme: availableTheme?.hex || '',
+    };
   }
   closeModal() {
     this.isModalOpen = false;
+    this.isAddCategoryDropdownOpen = false;
+    this.isAddThemeDropdownOpen = false;
   }
   saveBudget() {
     this.newBudget.maximum = Number(this.newBudget.maximum);
@@ -122,26 +177,20 @@ export class Budgets implements OnInit {
       next: () => {
         this.closeModal();
         this.loadData();
-        this.newBudget = { category: 'Entertainment', maximum: null as any, theme: '#277c78' };
       },
     });
   }
 
-  // --- Dropdown ---
-  toggleDropdown(id: string | number | undefined) {
-    if (!id) return;
-    this.activeDropdown = this.activeDropdown === id ? null : id;
-  }
-
-  // --- Edit Modal ---
   openEditModal(budget: Budget) {
-    this.selectedBudget = { ...budget }; 
+    this.selectedBudget = { ...budget };
     this.isEditModalOpen = true;
-    this.activeDropdown = null; 
+    this.activeDropdown = null;
   }
   closeEditModal() {
     this.isEditModalOpen = false;
     this.selectedBudget = null;
+    this.isEditCategoryDropdownOpen = false;
+    this.isEditThemeDropdownOpen = false;
   }
   saveEditedBudget() {
     if (!this.selectedBudget || !this.selectedBudget.id) return;
@@ -154,7 +203,6 @@ export class Budgets implements OnInit {
     });
   }
 
-  // --- Delete Modal ---
   openDeleteModal(budget: Budget) {
     this.selectedBudget = budget;
     this.isDeleteModalOpen = true;
@@ -172,5 +220,13 @@ export class Budgets implements OnInit {
         this.loadData();
       },
     });
+  }
+
+  toggleDropdown(id: string | number | undefined) {
+    if (!id) return;
+    this.activeDropdown = this.activeDropdown === id ? null : id;
+  }
+  closeErrorModal() {
+    this.errorModalMessage = null;
   }
 }

@@ -11,7 +11,7 @@
         <span class="text-sm text-[#f8f4f0] dark:text-gray-400 truncate">{{
           'Current Balance' | translate
         }}</span>
-        <span class="text-2xl md:text-3xl lg:text-4xl font-bold truncate">{{
+        <span class="text-xl sm:text-2xl md:text-3xl xl:text-4xl font-bold whitespace-nowrap">{{
           balance.current | currency: 'USD' : 'symbol'
         }}</span>
       </div>
@@ -21,7 +21,7 @@
         <span class="text-sm text-[#696868] dark:text-gray-400 truncate">{{
           'Income' | translate
         }}</span>
-        <span class="text-2xl md:text-3xl lg:text-4xl font-bold truncate">{{
+        <span class="text-xl sm:text-2xl md:text-3xl xl:text-4xl font-bold whitespace-nowrap">{{
           balance.income | currency: 'USD' : 'symbol'
         }}</span>
       </div>
@@ -31,7 +31,7 @@
         <span class="text-sm text-[#696868] dark:text-gray-400 truncate">{{
           'Expenses' | translate
         }}</span>
-        <span class="text-2xl md:text-3xl lg:text-4xl font-bold truncate">{{
+        <span class="text-xl sm:text-2xl md:text-3xl xl:text-4xl font-bold whitespace-nowrap">{{
           balance.expenses | currency: 'USD' : 'symbol'
         }}</span>
       </div>
@@ -65,13 +65,13 @@
         </div>
         <div class="flex flex-col md:flex-row gap-5">
           <div
-            class="bg-[#f8f4f0] dark:bg-gray-700 rounded-xl p-4 flex items-center gap-3 md:w-1/3 min-w-0 shrink-0"
+            class="bg-[#f8f4f0] dark:bg-gray-700 rounded-xl p-4 flex items-center gap-3 flex-1 min-w-0"
           >
             <div
               class="w-10 h-10 bg-white dark:bg-gray-600 rounded-full flex justify-center items-center shrink-0"
             >
               <img
-                src="/assets/images/icon-pot.svg"
+                src="assets/images/icon-pot.svg"
                 [alt]="'Pot Icon' | translate"
                 class="w-6 h-6"
               />
@@ -81,12 +81,12 @@
                 'Total Saved' | translate
               }}</span>
               <span
-                class="text-xl lg:text-3xl font-bold text-gray-900 dark:text-white truncate w-full"
-                >{{ totalSaved | currency: 'USD' : 'symbol' }}</span
+                class="text-xl sm:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-white whitespace-nowrap w-full"
+                >{{ totalSaved | currency: 'USD' : 'symbol' : '1.0-0' }}</span
               >
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-4 md:w-2/3">
+          <div class="grid grid-cols-2 gap-4 flex-1">
             @for (pot of pots | slice: 0 : 4; track pot.name) {
               <div
                 class="flex flex-col ps-4 border-s-4 rounded-sm justify-center min-w-0"
@@ -129,11 +129,10 @@
             </svg>
           </a>
         </div>
-
-        <div class="flex flex-col mt-2">
+        <div class="flex flex-col">
           @for (tx of transactions | slice: 0 : 5; track tx.id; let last = $last) {
             <div
-              class="flex justify-between items-center py-5 border-gray-100 dark:border-gray-700"
+              class="flex justify-between items-center py-4 dark:border-gray-700 border-gray-100"
               [class.border-b]="!last"
             >
               <div class="flex items-center gap-4 min-w-0 flex-1">
@@ -147,8 +146,7 @@
                   >{{ tx.name }}</span
                 >
               </div>
-
-              <div class="flex flex-col items-end gap-1.5 shrink-0 ms-4">
+              <div class="flex flex-col items-end gap-1 shrink-0 ms-2">
                 <span
                   class="font-bold text-sm md:text-base truncate"
                   [ngClass]="{
@@ -159,7 +157,7 @@
                   {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount | currency: 'USD' : 'symbol' }}
                 </span>
                 <span class="text-xs text-[#696868] dark:text-gray-400">{{
-                  tx.date | date: 'dd MMM yyyy'
+                  tx.date | date: 'dd MMM yyyy' : undefined : settings.locale()
                 }}</span>
               </div>
             </div>
@@ -295,3 +293,4 @@
     </div>
   </div>
 </div>
+  
