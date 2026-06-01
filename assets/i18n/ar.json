@@ -1,5 +1,5 @@
 {
-  "+ Add Money": "+ إضافة أموال",
+  "Add Money": "إضافة مبلغ",
   "+ Add New Budget": "+ إضافة ميزانية جديدة",
   "+ Add New Pot": "+ إضافة وعاء ادخاري جديد",
   "+ Add Transaction": "+ إضافة معاملة",
@@ -20,6 +20,7 @@
   "Are you sure you want to delete this pot? This action cannot be reversed, and all the money saved will be returned to your current balance.": "هل أنت متأكد من رغبتك في حذف هذا الوعاء الادخاري؟ لا يمكن التراجع عن هذا الإجراء، وستتم إعادة جميع الأموال المدخرة إلى رصيدك الحالي.",
   "As your budgets change, feel free to update your spending limits.": "مع تغير ميزانياتك، يمكنك تحديث حدود الإنفاق في أي وقت.",
   "Authentication": "تسجيل الدخول والتحقق",
+  "Already used": "مستخدم بالفعل",
   "Bill Title": "اسم الفاتورة",
   "Bills": "الفواتير",
   "Budget Category": "فئة الميزانية",
@@ -127,5 +128,10 @@
   "Concert Ticket": "تذكرة حفل",
   "Gift": "هدية",
   "New Laptop": "حاسوب محمول جديد",
-  "Holiday": "عطلة"
+  "Holiday": "عطلة",
+  "INSUFFICIENT_BALANCE_ADD": "عذراً، رصيدك الحالي لا يكفي لإضافة هذا المبلغ للصندوق.",
+  "INSUFFICIENT_POT_FUNDS": "عذراً، المبلغ المطلوب سحبه أكبر من إجمالي المدخرات في هذا الصندوق.",
+  "BUDGET_CATEGORY_EXISTS": "لديك ميزانية مضافة بالفعل لهذا القسم. يمكنك تعديلها بدلاً من إضافة واحدة جديدة.",
+  "Error": "تنبيه",
+  "Close": "إغلاق"
 }

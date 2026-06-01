@@ -1,5 +1,5 @@
 {
-  "+ Add Money": "+ Add Money",
+  "Add Money": "Add Money",
   "+ Add New Budget": "+ Add New Budget",
   "+ Add New Pot": "+ Add New Pot",
   "+ Add Transaction": "+ Add Transaction",
@@ -20,6 +20,7 @@
   "Are you sure you want to delete this pot? This action cannot be reversed, and all the money saved will be returned to your current balance.": "Are you sure you want to delete this pot? This action cannot be reversed, and all the money saved will be returned to your current balance.",
   "As your budgets change, feel free to update your spending limits.": "As your budgets change, feel free to update your spending limits.",
   "Authentication": "Authentication",
+  "Already used": "Already used",
   "Bill Title": "Bill Title",
   "Bills": "Bills",
   "Budget Category": "Budget Category",
@@ -127,5 +128,10 @@
   "Concert Ticket": "Concert Ticket",
   "Gift": "Gift",
   "New Laptop": "New Laptop",
-  "Holiday": "Holiday"
+  "Holiday": "Holiday",
+  "INSUFFICIENT_BALANCE_ADD": "Sorry, your current balance is insufficient to add this amount to the pot.",
+  "INSUFFICIENT_POT_FUNDS": "Sorry, the amount requested exceeds the total savings in this pot.",
+  "BUDGET_CATEGORY_EXISTS": "You already have a budget for this category. Please edit it instead of adding a new one.",
+  "Error": "Error",
+  "Close": "Close"
 }
